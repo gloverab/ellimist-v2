@@ -1,11 +1,15 @@
 <script lang='ts'>
   import smoothscroll from 'smoothscroll-polyfill';
+  import { BANDSINTOWN_API_KEY } from "../util/Env";
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import 'virtual:windi.css';
   import Burger from "../components/icons/Burger.svelte";
   import LogoBlack from "../components/icons/LogoBlack.svelte";
   import LogoColor from '../components/icons/LogoColor.svelte';
+
+  let loadingShows = true
+  let showsResults
 
   let mounted = false
   let transformPx = "0px"
@@ -56,8 +60,21 @@
     }
   }
 
+  const getUpcomingEvents = async () => {
+    try {
+      const resp = await fetch(`https://rest.bandsintown.com/artists/id_15464365/events/?app_id=${BANDSINTOWN_API_KEY}&date=upcoming`)
+      const data = await resp.json()
+      showsResults = data
+    } catch (err) {
+      throw err
+    } finally {
+      loadingShows = false
+    }
+  }
+
   onMount(() => {
     mounted = true
+    getUpcomingEvents()
     setTimeout(() => showNav = true, 100)
     if (document) {
       smoothscroll.polyfill();
@@ -68,7 +85,7 @@
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
 <div class='absolute z-1 top-0 left-0 h-full w-full flex justify-center items-center'>
-  <div class='duration-600 ease-out' style="transform: rotate({rotateBackdrop})">
+  <div class='duration-600 ease-out w-full duration-2000 {showNav ? 'opacity-100' : 'opacity-0'}' style="transform: rotate({rotateBackdrop})">
     <LogoBlack />
   </div>
 </div>
@@ -78,8 +95,8 @@
     <a class:text-primary={activeRoute === 'about'} href='/about'>
       About
     </a>
-    <a href='/releases'>
-      Releases
+    <a href='/'>
+      {$page.route.id === '/' ? "Contact" : "Home"}
     </a>
     <a class:text-primary={activeRoute === 'shows'} href='/shows'>
       Shows
@@ -129,12 +146,14 @@
 
       <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
         <div class='relative w-full max-w-100 p-6'>
+          
           <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows page</h1>
         </div>
       </div>
     </div>
   {/if}
 </div>
+
 <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
 <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
 
