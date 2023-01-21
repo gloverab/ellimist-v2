@@ -95,8 +95,8 @@
     <a class:text-primary={activeRoute === 'about'} href='/about'>
       About
     </a>
-    <a href='/'>
-      {$page.route.id === '/' ? "Contact" : "Home"}
+    <a href='/releases'>
+      Releases
     </a>
     <a class:text-primary={activeRoute === 'shows'} href='/shows'>
       Shows
