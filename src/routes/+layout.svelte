@@ -1,7 +1,7 @@
 <script lang='ts'>
-  import smoothscroll from 'smoothscroll-polyfill';
+  import * as animateScroll from "svelte-scrollto";
   import { BANDSINTOWN_API_KEY } from "../util/Env";
-  import { page } from '$app/stores';
+  import { navigating, page } from '$app/stores';
   import { onMount } from 'svelte';
   import 'virtual:windi.css';
   import Burger from "../components/icons/Burger.svelte";
@@ -13,18 +13,30 @@
   let loadingShows = true
   let showsResults
 
+  let releasesEl
+
+  let showToTop = false
+  let showAuxPages = false
+  let showNav = false
+
+  let rotateLetter1 = false
+  let rotateLetter2 = false
+  let rotateLetter3 = false
+  let rotateLetter4 = false
+  let rotateLetter5 = false
+  let rotateLetter6 = false
+  let rotateLetter7 = false
+  let rotateLetter8 = false
+
   let mounted = false
   let transformPx = "0px"
-  let navTranslate = "300px"
   let windowWidth: number
   let windowHeight: number
-  let navHeight: number
   let safeHeight: number
   let activeRoute = 'home'
   let showColorLogo = false
-  let showToTop = false
-  let showNav = false
-  let rotateBackdrop = "0deg"
+  let showBlackLogo = false
+  let rotateBackdrop = "90deg"
   let mostRecentScrolls = [0]
   let disableScrollLogic = false
 
@@ -63,12 +75,13 @@
   const handleReleasesNav = () => {
     disableScrollLogic = true
     setTimeout(() => disableScrollLogic = false, 500)
-
     activeRoute = 'releases'
     showToTop = true
+    animateScroll.scrollTo({ element: '#releases-wrapper' })
+    // releasesEl.scrollIntoView()
+    // window.scrollTo(1000,1000);
+    showColorLogo = false;
     if (mounted) {
-      window.scroll({ top: 400, left: 0, behavior: 'smooth' });
-      showColorLogo = false;
     }
 
     homeXY = [windowWidth - (homeNavW + 16), 16]
@@ -113,7 +126,9 @@
     }
   } else if ($page.route.id === "/releases") {
     // RELEASES
-    
+    if (browser) {
+      handleReleasesNav()
+    }
   } else if ($page.route.id === '/') {
     showToTop = false
     rotateBackdrop = "0deg"
@@ -149,6 +164,7 @@
       
       if ($page.route.id === "/releases" && window.scrollY < 300 && isScrollUpForSure) {
         goto('/', { replaceState: true });
+        handleHomeClick()
       } else if ($page.route.id !== "/releases" && window.scrollY > 300 && isScrollDownForSure) {
         handleReleasesNav()
         goto('/releases', { replaceState: true })
@@ -157,6 +173,7 @@
   }
 
   const handleHomeClick = () => {
+    animateScroll.scrollToTop()
     disableScrollLogic = true
     setTimeout(() => disableScrollLogic = false, 500)
   }
@@ -173,31 +190,35 @@
     }
   }
 
-  $: if (browser) {
-    smoothscroll.polyfill();
-  }
-
   onMount(() => {
     mounted = true
     getUpcomingEvents()
-    setTimeout(() => showNav = true, 100)
-    if (browser) {
-      smoothscroll.polyfill();
-    }
+    setTimeout(() => showBlackLogo = true, 0)
+    setTimeout(() => showAuxPages = true, 100)
+    setTimeout(() => showNav = true, 400)
+
+    setTimeout(() => rotateLetter1 = true, 100)
+    setTimeout(() => rotateLetter2 = true, 200)
+    setTimeout(() => rotateLetter3 = true, 300)
+    setTimeout(() => rotateLetter4 = true, 400)
+    setTimeout(() => rotateLetter5 = true, 500)
+    setTimeout(() => rotateLetter6 = true, 600)
+    setTimeout(() => rotateLetter7 = true, 700)
+    setTimeout(() => rotateLetter8 = true, 800)
   })
 </script>
 
 <svelte:window on:scroll={handleScroll} bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
 <div class='absolute z-1 top-0 left-0 h-full w-full flex justify-center items-center p-2'>
-  <div class='duration-600 ease-out w-full duration-2000 {showNav ? 'opacity-100' : 'opacity-0'}' style="transform: rotate({rotateBackdrop})">
+  <div class='duration-600 ease-out w-full duration-2000 {showBlackLogo ? 'opacity-100' : 'opacity-0'}' style="transform: rotate({rotateBackdrop})">
     <LogoBlack />
   </div>
 </div>
 
 <div bind:clientHeight={padding8Height} class='absolute h-8' />
 
-<div class='w-screen fixed top-0 left-0 z-4'>
+<div class='w-screen fixed top-0 left-0 z-4 duration-500' class:opacity-100={showNav} class:opacity-0={!showNav}>
   <a
     bind:this={aboutNav}
     bind:clientHeight={aboutNavH}
@@ -205,7 +226,7 @@
     on:click={handleHomeClick}
     style="transform: translate3d({aboutXY[0]}px, {aboutXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:text-primary={activeRoute === 'about'}
+    class:active-nav={activeRoute === 'about'}
     href='/about'
   >
     About
@@ -218,7 +239,7 @@
     class='nav-item top-0 left-0 z-4 duration-500'
     class:opacity-0={activeRoute === 'home'}
     class:opacity-100={activeRoute === 'about' || activeRoute === 'shows'}
-    class:text-primary={activeRoute === ''}
+    class:active-nav={activeRoute === ''}
     href='/'
   >
     Home
@@ -229,7 +250,7 @@
     on:click={handleReleasesNav}
     style="transform: translate3d({releasesXY[0]}px, {releasesXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:text-primary={activeRoute === 'releases'}
+    class:active-nav={activeRoute === 'releases'}
     href='/releases'
   >
     Releases
@@ -240,39 +261,27 @@
     on:click={handleHomeClick}
     style="transform: translate3d({showsXY[0]}px, {showsXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:text-primary={activeRoute === 'shows'}
+    class:active-nav={activeRoute === 'shows'}
     href='/shows'
   >
     Shows
   </a>
 </div>
 
-<div class='w-screen overflow-x-hidden'>
-
-  <a href='/' class='fixed z-3 top-5 right-5 h-10 w-10 duration-500 transform {showColorLogo ? "opacity-100" : "opacity-0"}'>
-    <LogoColor />
-  </a>
-
-  <!-- <div style="top: {safeHeight - 80}px;" class="fixed {showToTop ? "z-3" : "z-1"} w-full flex justify-center">
-    <a href='/' class='duration-500 transform {showToTop ? "opacity-100" : "opacity-0"}'>
-      <div class='px-5 py-2 bg-primary p-3 rounded-full bg-opacity-90'>
-        <span class='font-medium'>
-          Back to Top
-        </span>
-      </div>
-    </a>
-  </div> -->
-
-  {#if showNav}
-    <div bind:clientHeight={safeHeight} class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
+<div class='w-screen overflow-hidden'>
+  <div bind:clientHeight={safeHeight} class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
+    {#if showAuxPages}
       <div class='wrapper flex justify-center items-center absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
-        <div bind:clientHeight={aboutHeaderHeight} class='absolute top-6 left-6'>
+        <a href='/' class='fixed z-3 top-5 right-6 sm:right-18 md:right-28 h-10 w-10 duration-500 transform {showColorLogo ? "opacity-100" : "opacity-0"}'>
+          <LogoColor />
+        </a>
+        <div bind:clientHeight={aboutHeaderHeight} class='absolute top-6 left-6 sm:left-18 md:left-28'>
           <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>organic</h1>
           <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>electronic</h1>
           <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>music</h1>
         </div>
         <div bind:clientHeight={aboutTextHeight} class='h-100 pb-8 overflow-y-scroll'>
-          <p class='px-6 text-white font-sans italic'>
+          <p class='px-6 sm:px-18 md:px-28 text-white font-sans italic'>
             Ellimist is the Boston-based multifaceted artist focused on creating organic electronic music that moves the body and mind. Known for his guitar playing with Pi Wrecks, instrumental prowess with post-rock duo It Was a Good Dream, and unique organic electronic production style with violinist Josh Knowles, Alex Glover founded Ellimist with the goal of creating music that stretches the boundaries of listeners from any background.
             <br>
             <br>
@@ -280,14 +289,24 @@
           </p>
         </div>
       </div>
+    {/if}
       
       <div class='wrapper relative flex justify-center items-center absolute top-0 left-0' style="width: {windowWidth}px">
         <div class='absolute top-6 right-6 w-7 h-7 z-3'>
           <Burger />
         </div>
         <div bind:this={homeScreenElementWrapper} class='w-full'>
-          <h1 bind:this={ellimistName} bind:clientHeight={ellimistNameHeight} class='font-display text-primary text-6xl uppercase text-center'>ellimist</h1>
-          <div class='z-0 px-7 relative flex justify-between text-white text-lg uppercase italic w-full max-w-150 opacity-0'>
+          <div bind:this={ellimistName} bind:clientHeight={ellimistNameHeight} class='font-display text-primary text-7xl pb-2 uppercase text-center flex justify-center'>
+            <span class='transform duration-600 {rotateLetter1 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>e</span>
+            <span class='transform duration-600 {rotateLetter2 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
+            <span class='transform duration-600 {rotateLetter3 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
+            <span class='transform duration-600 {rotateLetter4 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
+            <span class='transform duration-600 {rotateLetter5 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>m</span>
+            <span class='transform duration-600 {rotateLetter6 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
+            <span class='transform duration-600 {rotateLetter7 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>s</span>
+            <span class='transform duration-600 {rotateLetter8 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>t</span>
+          </div>
+          <div class='z-0 px-7 sm:px-20 md:px-30 relative flex justify-between text-white text-lg uppercase italic w-full opacity-0'>
             <span bind:this={aboutNavShowAllDummy}>
               About
             </span>
@@ -301,7 +320,7 @@
               Shows
             </span>
 
-            <div class='absolute px-7 top-0 left-0 w-full flex justify-between'>
+            <div class='absolute px-7 sm:px-20 md:px-30 top-0 left-0 w-full flex justify-between'>
               <span bind:this={aboutNavNoHomeDummy}>
                 About
               </span>
@@ -315,29 +334,32 @@
           </div>
         </div>
       </div>
-
-      <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
-        <div class='relative w-full max-w-100 p-6'>
-          
-          <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows page</h1>
+      {#if showAuxPages}
+        <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
+          <div class='relative w-full max-w-100 p-6'>
+            
+            <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows page</h1>
+          </div>
         </div>
-      </div>
+      {/if}
     </div>
-  {/if}
 </div>
 
-<img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-<img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-<img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-<img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-<img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-<img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-<img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-<img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-<img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-<img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-<img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-<img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+<div id='releases-wrapper' class='min-h-screen relative z-3' bind:this={releasesEl}>
+  <div class='absolute top-0 right-0 w-full h-90 bg-gradient-to-tr from-transparent via-transparent to-black' />
+  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
+  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
+  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
+  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
+  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
+  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
+  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
+</div>
 
 <style global>
   @font-face{
@@ -364,5 +386,9 @@
 
   .nav-item {
     @apply text-white text-lg uppercase italic absolute;
+  }
+
+  .nav-item.active-nav {
+    @apply text-primary;
   }
 </style>
