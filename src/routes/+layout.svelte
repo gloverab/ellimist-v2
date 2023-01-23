@@ -51,14 +51,31 @@
   let aboutTextHeight: number
 
   let aboutNav
-  let aboutNavH
-  let aboutNavW
+  let aboutNavH: number
+  let aboutNavW: number
   let homeNav
-  let homeNavW
+  let homeNavW: number
   let releasesNav
-  let releasesNavW
+  let releasesNavW: number
   let showsNav
-  let showsNavW
+  let showsNavW: number
+
+  const handleReleasesNav = () => {
+    disableScrollLogic = true
+    setTimeout(() => disableScrollLogic = false, 500)
+
+    activeRoute = 'releases'
+    showToTop = true
+    if (mounted) {
+      window.scroll({ top: safeHeight, left: 0, behavior: 'smooth' });
+      showColorLogo = false;
+    }
+
+    homeXY = [windowWidth - (homeNavW + 16), 16]
+    aboutXY = [windowWidth - (aboutNavW + 16), aboutNavH + 24]
+    releasesXY = [windowWidth - (releasesNavW + 16), (aboutNavH * 2) + 32]
+    showsXY = [windowWidth - (showsNavW + 16), (aboutNavH * 3) + 40]
+  }
 
   $: if ($page.route.id === "/about") {
     // ABOUT
@@ -96,18 +113,8 @@
     }
   } else if ($page.route.id === "/releases") {
     // RELEASES
-    activeRoute = 'releases'
-    showToTop = true
-    if (mounted) {
-      window.scroll({ top: safeHeight, left: 0, behavior: 'smooth' });
-      showColorLogo = false;
-    }
-
-    homeXY = [windowWidth - (homeNavW + 16), 16]
-    aboutXY = [windowWidth - (aboutNavW + 16), aboutNavH + 24]
-    releasesXY = [windowWidth - (releasesNavW + 16), (aboutNavH * 2) + 32]
-    showsXY = [windowWidth - (showsNavW + 16), (aboutNavH * 3) + 40]
-  } else {
+    
+  } else if ($page.route.id === '/') {
     showToTop = false
     rotateBackdrop = "0deg"
     transformPx = "0px"
@@ -215,7 +222,7 @@
   <a
     bind:this={releasesNav}
     bind:clientWidth={releasesNavW}
-    on:click={handleHomeClick}
+    on:click={handleReleasesNav}
     style="transform: translate3d({releasesXY[0]}px, {releasesXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
     class:text-primary={activeRoute === 'releases'}
