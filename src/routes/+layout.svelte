@@ -75,7 +75,7 @@
     showsXY = [showsNavShowAllDummy?.offsetLeft, navY]
 
     if (mounted) {
-      window.scroll({ top: 0, behavior: 'smooth' });
+      window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }
   } else if ($page.route.id === "/shows") {
     // SHOWS
@@ -91,14 +91,14 @@
     showsXY = [showsNavShowAllDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
 
     if (mounted) {
-      window.scroll({ top: 0, behavior: 'smooth' });
+      window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }
   } else if ($page.route.id === "/releases") {
     // RELEASES
     activeRoute = 'releases'
     showToTop = true
     if (mounted) {
-      window.scroll({ top: safeHeight, behavior: 'smooth' });
+      window.scroll({ top: safeHeight, left: 0, behavior: 'smooth' });
       showColorLogo = false;
     }
 
@@ -118,7 +118,7 @@
     releasesXY = [releasesNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
     showsXY = [showsNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
     if (mounted) {
-      window.scroll({ top: 0, behavior: 'smooth' });
+      window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }
   }
 
