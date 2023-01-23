@@ -67,7 +67,7 @@
     activeRoute = 'releases'
     showToTop = true
     if (mounted) {
-      window.scroll({ top: safeHeight, left: 0, behavior: 'smooth' });
+      window.scroll({ top: 400, left: 0, behavior: 'smooth' });
       showColorLogo = false;
     }
 
