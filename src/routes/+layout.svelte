@@ -150,6 +150,7 @@
       if ($page.route.id === "/releases" && window.scrollY < 300 && isScrollUpForSure) {
         goto('/', { replaceState: true });
       } else if ($page.route.id !== "/releases" && window.scrollY > 300 && isScrollDownForSure) {
+        handleReleasesNav()
         goto('/releases', { replaceState: true })
       }
     }
@@ -260,7 +261,7 @@
   </div> -->
 
   {#if showNav}
-    <div bind:offsetHeight={safeHeight} class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
+    <div bind:clientHeight={safeHeight} class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
       <div class='wrapper flex justify-center items-center absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
         <div bind:clientHeight={aboutHeaderHeight} class='absolute top-6 left-6'>
           <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>organic</h1>
@@ -343,6 +344,7 @@
   }
 
   .wrapper {
+    height: 100vh;
     height: -webkit-fill-available;
     /* height: 100vh; */
   }
