@@ -8,6 +8,7 @@
   import LogoBlack from "../components/icons/LogoBlack.svelte";
   import LogoColor from '../components/icons/LogoColor.svelte';
   import { goto } from '$app/navigation';
+  import { browser } from '$app/environment';
 
   let loadingShows = true
   let showsResults
@@ -168,7 +169,8 @@
     mounted = true
     getUpcomingEvents()
     setTimeout(() => showNav = true, 100)
-    if (document) {
+    if (browser) {
+      console.log(browser)
       smoothscroll.polyfill();
     }
   })
