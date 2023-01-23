@@ -173,12 +173,15 @@
     }
   }
 
+  $: if (browser) {
+    smoothscroll.polyfill();
+  }
+
   onMount(() => {
     mounted = true
     getUpcomingEvents()
     setTimeout(() => showNav = true, 100)
     if (browser) {
-      console.log(browser)
       smoothscroll.polyfill();
     }
   })
