@@ -9,13 +9,13 @@
   import LogoColor from '../components/icons/LogoColor.svelte';
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
+  import Releases from "../components/Releases.svelte";
+  import SocialIcons from "../components/SocialIcons.svelte";
+  import { fade } from "svelte/transition";
 
   let loadingShows = true
   let showsResults
 
-  let releasesEl
-
-  let showToTop = false
   let showAuxPages = false
   let showNav = false
 
@@ -32,7 +32,6 @@
   let transformPx = "0px"
   let windowWidth: number
   let windowHeight: number
-  let safeHeight: number
   let activeRoute = 'home'
   let showColorLogo = false
   let showBlackLogo = false
@@ -43,8 +42,7 @@
   let padding8Height: number
 
   let homeScreenElementWrapper: any
-  let ellimistName
-  let ellimistNameHeight: number
+  let ellimistNameHeight = 0
   let aboutNavShowAllDummy: any
   let homeNavShowAllDummy: any
   let releasesNavShowAllDummy: any
@@ -76,7 +74,6 @@
     disableScrollLogic = true
     setTimeout(() => disableScrollLogic = false, 500)
     activeRoute = 'releases'
-    showToTop = true
     animateScroll.scrollTo({ element: '#releases-wrapper' })
     // releasesEl.scrollIntoView()
     // window.scrollTo(1000,1000);
@@ -92,7 +89,6 @@
 
   $: if ($page.route.id === "/about") {
     // ABOUT
-    showToTop = false
     rotateBackdrop = "-90deg"
     transformPx = `${windowWidth}px`
     activeRoute = 'about'
@@ -110,7 +106,6 @@
     }
   } else if ($page.route.id === "/shows") {
     // SHOWS
-    showToTop = false
     rotateBackdrop = "90deg"
     transformPx = `-${windowWidth}px`
     activeRoute = 'shows'
@@ -130,7 +125,6 @@
       handleReleasesNav()
     }
   } else if ($page.route.id === '/') {
-    showToTop = false
     rotateBackdrop = "0deg"
     transformPx = "0px"
     activeRoute = 'home'
@@ -145,7 +139,7 @@
     }
   }
 
-  const handleScroll = (e) => {
+  const handleScroll = () => {
     if (!disableScrollLogic) {
       let newMostRecentScrolls = [...mostRecentScrolls]
       newMostRecentScrolls.unshift(window.scrollY)
@@ -218,7 +212,7 @@
 
 <div bind:clientHeight={padding8Height} class='absolute h-8' />
 
-<div class='w-screen fixed top-0 left-0 z-4 duration-500' class:opacity-100={showNav} class:opacity-0={!showNav}>
+<div class='w-screen fixed top-0 left-0 z-5 duration-500' class:opacity-100={showNav} class:opacity-0={!showNav}>
   <a
     bind:this={aboutNav}
     bind:clientHeight={aboutNavH}
@@ -268,13 +262,17 @@
   </a>
 </div>
 
+<div class='{activeRoute === 'home' || activeRoute === 'about' ? 'z-10' : 'z-0'} fixed top-6 right-6'>
+  <SocialIcons />
+</div>
+
 <div class='w-screen overflow-hidden'>
-  <div bind:clientHeight={safeHeight} class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
+  <div class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
     {#if showAuxPages}
       <div class='wrapper flex justify-center items-center absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
-        <a href='/' class='fixed z-3 top-5 right-6 sm:right-18 md:right-28 h-10 w-10 duration-500 transform {showColorLogo ? "opacity-100" : "opacity-0"}'>
+        <!-- <a href='/' class='fixed z-3 top-5 right-6 sm:right-18 md:right-28 h-10 w-10 duration-500 transform {showColorLogo ? "opacity-100" : "opacity-0"}'>
           <LogoColor />
-        </a>
+        </a> -->
         <div bind:clientHeight={aboutHeaderHeight} class='absolute top-6 left-6 sm:left-18 md:left-28'>
           <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>organic</h1>
           <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>electronic</h1>
@@ -290,76 +288,67 @@
         </div>
       </div>
     {/if}
-      
-      <div class='wrapper relative flex justify-center items-center absolute top-0 left-0' style="width: {windowWidth}px">
-        <div class='absolute top-6 right-6 w-7 h-7 z-3'>
-          <Burger />
+
+    <div class='wrapper relative flex justify-center items-center absolute top-0 left-0' style="width: {windowWidth}px">
+      <div bind:this={homeScreenElementWrapper} class='w-full'>
+        <div bind:clientHeight={ellimistNameHeight} class='font-display text-primary text-7xl pb-2 uppercase text-center flex justify-center'>
+          <span class='transform duration-600 {rotateLetter1 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>e</span>
+          <span class='transform duration-600 {rotateLetter2 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
+          <span class='transform duration-600 {rotateLetter3 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
+          <span class='transform duration-600 {rotateLetter4 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
+          <span class='transform duration-600 {rotateLetter5 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>m</span>
+          <span class='transform duration-600 {rotateLetter6 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
+          <span class='transform duration-600 {rotateLetter7 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>s</span>
+          <span class='transform duration-600 {rotateLetter8 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>t</span>
         </div>
-        <div bind:this={homeScreenElementWrapper} class='w-full'>
-          <div bind:this={ellimistName} bind:clientHeight={ellimistNameHeight} class='font-display text-primary text-7xl pb-2 uppercase text-center flex justify-center'>
-            <span class='transform duration-600 {rotateLetter1 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>e</span>
-            <span class='transform duration-600 {rotateLetter2 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
-            <span class='transform duration-600 {rotateLetter3 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
-            <span class='transform duration-600 {rotateLetter4 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
-            <span class='transform duration-600 {rotateLetter5 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>m</span>
-            <span class='transform duration-600 {rotateLetter6 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
-            <span class='transform duration-600 {rotateLetter7 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>s</span>
-            <span class='transform duration-600 {rotateLetter8 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>t</span>
-          </div>
-          <div class='z-0 px-7 sm:px-20 md:px-30 relative flex justify-between text-white text-lg uppercase italic w-full opacity-0'>
-            <span bind:this={aboutNavShowAllDummy}>
+        <div class='z-0 px-7 sm:px-20 md:px-30 relative flex justify-between text-white text-lg uppercase italic w-full opacity-0'>
+          <span bind:this={aboutNavShowAllDummy}>
+            About
+          </span>
+          <span bind:this={homeNavShowAllDummy}>
+            Home
+          </span>
+          <span bind:this={releasesNavShowAllDummy}>
+            Releases
+          </span>
+          <span bind:this={showsNavShowAllDummy}>
+            Shows
+          </span>
+
+          <div class='absolute px-7 sm:px-20 md:px-30 lg:px-70 xl:px-100 top-0 left-0 w-full flex justify-between'>
+            <span bind:this={aboutNavNoHomeDummy}>
               About
             </span>
-            <span bind:this={homeNavShowAllDummy}>
-              Home
-            </span>
-            <span bind:this={releasesNavShowAllDummy}>
+            <span bind:this={releasesNavNoHomeDummy}>
               Releases
             </span>
-            <span bind:this={showsNavShowAllDummy}>
+            <span bind:this={showsNavNoHomeDummy}>
               Shows
             </span>
-
-            <div class='absolute px-7 sm:px-20 md:px-30 top-0 left-0 w-full flex justify-between'>
-              <span bind:this={aboutNavNoHomeDummy}>
-                About
-              </span>
-              <span bind:this={releasesNavNoHomeDummy}>
-                Releases
-              </span>
-              <span bind:this={showsNavNoHomeDummy}>
-                Shows
-              </span>
-            </div>
           </div>
         </div>
       </div>
-      {#if showAuxPages}
-        <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
-          <div class='relative w-full max-w-100 p-6'>
-            
-            <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows page</h1>
-          </div>
-        </div>
-      {/if}
     </div>
+    {#if showAuxPages}
+      <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
+        <div class='relative w-full max-w-100 p-6'>
+          
+          <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows</h1>
+        </div>
+      </div>
+    {/if}
+  </div>
 </div>
 
-<div id='releases-wrapper' class='min-h-screen relative z-3' bind:this={releasesEl}>
-  <div class='absolute top-0 right-0 w-full h-90 bg-gradient-to-tr from-transparent via-transparent to-black' />
-  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-  <img src="https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1" />
-  <img src="https://www.dropbox.com/s/ps2txc7iiueu30w/Move%20Single%20Art.png?raw=1" />
-</div>
+{#if activeRoute === 'releases'}
+  <div in:fade out:fade class='fixed z-4 top-0 right-0 w-full h-90 bg-gradient-to-tr from-transparent via-transparent to-black' />
+{/if}
+
+<Releases />
+
+<svelte:head>
+  <title>Ellimist | Organic Electronic Music | Official Website</title>
+</svelte:head>
 
 <style global>
   @font-face{
