@@ -13,6 +13,7 @@
   import SocialIcons from "../components/SocialIcons.svelte";
   import { fade } from "svelte/transition";
 
+  let safeAreaHeight: number
   let loadingShows = true
   let showsResults
 
@@ -32,7 +33,6 @@
   let transformPx = "0px"
   let windowWidth: number
   let windowHeight: number
-  let activeRoute = 'home'
   let showColorLogo = false
   let showBlackLogo = false
   let rotateBackdrop = "90deg"
@@ -70,31 +70,38 @@
   let showsNav
   let showsNavW: number
 
-  const handleReleasesNav = () => {
-    disableScrollLogic = true
-    setTimeout(() => disableScrollLogic = false, 500)
-    activeRoute = 'releases'
-    animateScroll.scrollTo({ element: '#releases-wrapper' })
-    // releasesEl.scrollIntoView()
-    // window.scrollTo(1000,1000);
-    showColorLogo = false;
-    if (mounted) {
-    }
-
+  const releasePostions = () => {
     homeXY = [windowWidth - (homeNavW + 16), 16]
     aboutXY = [windowWidth - (aboutNavW + 16), aboutNavH + 24]
     releasesXY = [windowWidth - (releasesNavW + 16), (aboutNavH * 2) + 32]
     showsXY = [windowWidth - (showsNavW + 16), (aboutNavH * 3) + 40]
   }
 
+  const homePositions = () => {
+    aboutXY = [aboutNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
+    homeXY = [releasesNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
+    releasesXY = [releasesNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
+    showsXY = [showsNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
+  }
+
+  const scrollToReleases = () => {
+    disableScrollLogic = true
+    setTimeout(() => disableScrollLogic = false, 500)
+    animateScroll.scrollTo({ element: '#releases-wrapper' })
+  }
+
+  const handleReleasesNav = () => {
+    scrollToReleases()
+    releasePostions()
+  }
+
   $: if ($page.route.id === "/about") {
     // ABOUT
     rotateBackdrop = "-90deg"
     transformPx = `${windowWidth}px`
-    activeRoute = 'about'
     showColorLogo = true
 
-    const navY = aboutHeaderHeight + aboutTextHeight + padding8Height * 2
+    const navY = aboutHeaderHeight + aboutTextHeight + aboutNavH + (padding8Height / 2)
 
     aboutXY = [aboutNavShowAllDummy?.offsetLeft, navY]
     homeXY = [homeNavShowAllDummy?.offsetLeft, navY]
@@ -108,7 +115,6 @@
     // SHOWS
     rotateBackdrop = "90deg"
     transformPx = `-${windowWidth}px`
-    activeRoute = 'shows'
     showColorLogo = true
 
     aboutXY = [aboutNavShowAllDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
@@ -121,19 +127,12 @@
     }
   } else if ($page.route.id === "/releases") {
     // RELEASES
-    if (browser) {
-      handleReleasesNav()
-    }
   } else if ($page.route.id === '/') {
     rotateBackdrop = "0deg"
     transformPx = "0px"
-    activeRoute = 'home'
     showColorLogo = false
 
-    aboutXY = [aboutNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
-    homeXY = [releasesNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
-    releasesXY = [releasesNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
-    showsXY = [showsNavNoHomeDummy?.offsetLeft, homeScreenElementWrapper?.offsetTop + ellimistNameHeight]
+    homePositions()
     if (mounted) {
       window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }
@@ -156,12 +155,16 @@
         isScrollDownForSure = true
       }
       
-      if ($page.route.id === "/releases" && window.scrollY < 300 && isScrollUpForSure) {
-        goto('/', { replaceState: true });
-        handleHomeClick()
-      } else if ($page.route.id !== "/releases" && window.scrollY > 300 && isScrollDownForSure) {
-        handleReleasesNav()
-        goto('/releases', { replaceState: true })
+      if ($page.route.id === "/releases" && window.scrollY < 199 && isScrollUpForSure) {
+        homePositions()
+        disableScrollLogic = true
+        setTimeout(() => disableScrollLogic = false, 500)
+        goto('/', { replaceState: true, noScroll: true });
+      } else if ($page.route.id !== "/releases" && window.scrollY > 200 && isScrollDownForSure) {
+        releasePostions()
+        disableScrollLogic = true
+        setTimeout(() => disableScrollLogic = false, 500)
+        goto('/releases', { replaceState: true, noScroll: true })
       }
     }
   }
@@ -220,7 +223,7 @@
     on:click={handleHomeClick}
     style="transform: translate3d({aboutXY[0]}px, {aboutXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:active-nav={activeRoute === 'about'}
+    class:active-nav={$page.route.id === "/about"}
     href='/about'
   >
     About
@@ -231,9 +234,9 @@
     on:click={handleHomeClick}
     style="transform: translate3d({homeXY[0]}px, {homeXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:opacity-0={activeRoute === 'home'}
-    class:opacity-100={activeRoute === 'about' || activeRoute === 'shows'}
-    class:active-nav={activeRoute === ''}
+    class:opacity-0={$page.route.id === "/"}
+    class:opacity-100={$page.route.id === "/about" || $page.route.id === "/shows"}
+    class:active-nav={$page.route.id === "/"}
     href='/'
   >
     Home
@@ -244,7 +247,7 @@
     on:click={handleReleasesNav}
     style="transform: translate3d({releasesXY[0]}px, {releasesXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:active-nav={activeRoute === 'releases'}
+    class:active-nav={$page.route.id === "/releases"}
     href='/releases'
   >
     Releases
@@ -255,36 +258,47 @@
     on:click={handleHomeClick}
     style="transform: translate3d({showsXY[0]}px, {showsXY[1]}px, 0);"
     class='nav-item top-0 left-0 z-4 duration-500'
-    class:active-nav={activeRoute === 'shows'}
+    class:active-nav={$page.route.id === "/shows"}
     href='/shows'
   >
     Shows
   </a>
 </div>
 
-<div class='{activeRoute === 'home' || activeRoute === 'about' ? 'z-10' : 'z-0'} fixed top-6 right-6'>
+<div class='{$page.route.id === "/" || $page.route.id === "/about" ? 'z-10' : 'z-0'} fixed top-6 right-6'>
   <SocialIcons />
 </div>
 
-<div class='w-screen overflow-hidden'>
-  <div class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
+<div class='w-screen overflow-x-hidden'>
+  <div bind:clientHeight={safeAreaHeight} class='wrapper relative z-2 duration-500' style="transform: translateX({transformPx}); width: {windowWidth}px;">
     {#if showAuxPages}
-      <div class='wrapper flex justify-center items-center absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
-        <!-- <a href='/' class='fixed z-3 top-5 right-6 sm:right-18 md:right-28 h-10 w-10 duration-500 transform {showColorLogo ? "opacity-100" : "opacity-0"}'>
-          <LogoColor />
-        </a> -->
-        <div bind:clientHeight={aboutHeaderHeight} class='absolute top-6 left-6 sm:left-18 md:left-28'>
-          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>organic</h1>
-          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>electronic</h1>
-          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-5'>music</h1>
+      <div class='wrapper flex flex-col items-start absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
+        <div bind:clientHeight={aboutHeaderHeight} class='left-6 sm:left-18 md:left-28 pb-6'>
+          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-6'>organic</h1>
+          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-6'>electronic</h1>
+          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-6'>music</h1>
         </div>
-        <div bind:clientHeight={aboutTextHeight} class='h-100 pb-8 overflow-y-scroll'>
-          <p class='px-6 sm:px-18 md:px-28 text-white font-sans italic'>
+        <div style="max-height: {safeAreaHeight - aboutHeaderHeight - aboutNavH - (padding8Height * 2)}px;" bind:clientHeight={aboutTextHeight} class='pb-8 px-6 sm:px-18 md:px-28 sm:flex overflow-y-scroll overflow-x-hidden sm:space-x-4'>
+          <p class='text-white font-sans italic md:flex-1'>
             Ellimist is the Boston-based multifaceted artist focused on creating organic electronic music that moves the body and mind. Known for his guitar playing with Pi Wrecks, instrumental prowess with post-rock duo It Was a Good Dream, and unique organic electronic production style with violinist Josh Knowles, Alex Glover founded Ellimist with the goal of creating music that stretches the boundaries of listeners from any background.
             <br>
             <br>
             Equal parts sound design, and composition, Ellimist's music transports listeners on a journey through a combination of live instrumentation, ambient melodies, and bone ratting bass that flirts with funk, house, dubstep, and everything in between.
           </p>
+          <div class='hidden md:inline-grid md:flex-1 grid md:grid-cols-2 md:row-auto gap-2'>
+            <div class='row-auto'>
+              <img src='https://www.dropbox.com/s/dhmzuf42bwv9gn9/Gift%20of%20Conviction%20Artwork.png?raw=1' />
+            </div>
+            <div>
+              <img src='https://www.dropbox.com/s/kqhtynt09z7rruz/Ellimist%20Florish%20Single%20Artwork%203000x3000.png?raw=1' />
+            </div>
+            <div>
+              <img src='https://www.dropbox.com/s/vsj9asxpe1mlkov/creatures-from-the-deep.jpeg?raw=1' />
+            </div>
+            <div>
+              <img src='https://www.dropbox.com/s/9msyhh66kkosr81/throne-stone-sm.png?raw=1' />
+            </div>
+          </div>
         </div>
       </div>
     {/if}
@@ -340,7 +354,7 @@
   </div>
 </div>
 
-{#if activeRoute === 'releases'}
+{#if $page.route.id === "/releases"}
   <div in:fade out:fade class='fixed z-4 top-0 right-0 w-full h-90 bg-gradient-to-tr from-transparent via-transparent to-black' />
 {/if}
 

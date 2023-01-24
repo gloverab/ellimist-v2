@@ -8,28 +8,30 @@
 
   $: if (browser) {
     const canvas = document.querySelector("canvas");
-    const ctx = canvas.getContext("2d");
-    let cw = (canvas.width = 297);
-    let ch = (canvas.height = 550);
-  
-    // create the liniar gradient
-    // SVG equivalent <linearGradient x1="0" y1="0" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
-    let grd = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    // SVG equivalent: <stop offset="0%" stop-color="#ffff25" />
-    grd.addColorStop(0, "#ffff25");
-    // SVG equivalent: <stop offset="100%" stop-color="#f71818" />
-    grd.addColorStop(1, "#f71818");
-    ctx.fillStyle = grd;
-  
-    //draw the circles
-    for (let y = 100; y < 550; y += 100) {
-      drawCircle(90,y,50);
-    }
-  
-    function drawCircle(x,y,r) {
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, 2 * Math.PI);
-      ctx.fill();
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      let cw = (canvas.width = 297);
+      let ch = (canvas.height = 550);
+    
+      // create the liniar gradient
+      // SVG equivalent <linearGradient x1="0" y1="0" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
+      let grd = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      // SVG equivalent: <stop offset="0%" stop-color="#ffff25" />
+      grd.addColorStop(0, "#ffff25");
+      // SVG equivalent: <stop offset="100%" stop-color="#f71818" />
+      grd.addColorStop(1, "#f71818");
+      ctx.fillStyle = grd;
+    
+      //draw the circles
+      for (let y = 100; y < 550; y += 100) {
+        drawCircle(90,y,50);
+      }
+    
+      function drawCircle(x,y,r) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fill();
+      }
     }
   }
   $: instaTransform = 'translate(100, 0)'
