@@ -280,10 +280,10 @@
         </div>
         <div style="max-height: {safeAreaHeight - aboutHeaderHeight - aboutNavH - (padding8Height * 2)}px;" bind:clientHeight={aboutTextHeight} class='pb-8 px-6 sm:px-18 md:px-28 sm:flex overflow-y-scroll overflow-x-hidden sm:space-x-4'>
           <p class='text-white font-sans italic md:flex-1'>
-            Ellimist is the Boston-based multifaceted artist focused on creating organic electronic music that moves the body and mind. Known for his guitar playing with Pi Wrecks, instrumental prowess with post-rock duo It Was a Good Dream, and unique organic electronic production style with violinist Josh Knowles, Alex Glover founded Ellimist with the goal of creating music that stretches the boundaries of listeners from any background.
+            Ellimist is the Boston-based multifaceted electronic artist focused on creating organic music that moves the body and mind. Known for his guitar playing in Pi Wrecks and Weird Phishes, multi-instrumental prowess with post-rock duo It Was A Good Dream, and unique production style with violinist Josh Knowles, Alex Glover founded Ellimist with the goal of creating music that stretches the boundaries of listeners from any background.
             <br>
             <br>
-            Equal parts sound design, and composition, Ellimist's music transports listeners on a journey through a combination of live instrumentation, ambient melodies, and bone ratting bass that flirts with funk, house, dubstep, and everything in between.
+            Equal parts sound design, and composition, Ellimist's music whisks listeners away on a journey through a combination of live instrumentation, ambient melodies, and bone ratting bass that flirts with funk, house, dubstep, and everything in between.
           </p>
           <div class='hidden md:inline-grid md:flex-1 grid md:grid-cols-2 md:row-auto gap-2'>
             <div class='row-auto'>
@@ -382,8 +382,8 @@
   }
 
   .wrapper {
-    height: 100vh;
     height: -webkit-fill-available;
+    height: 100vh;
     /* height: 100vh; */
   }
 
