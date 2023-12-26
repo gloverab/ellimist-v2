@@ -4,6 +4,11 @@
 
 </script>
 
+<svelte:head>
+  <title>Ellimist Music | Official Website</title>
+  <meta name="description" content="Ellimist is an electronic music producer and DJ located in Boston, MA." />
+</svelte:head>
+
 <div class='wrapper relative flex justify-center items-center'>
   <div class='absolute top-6 right-6 w-7 h-7 z-3'>
     <Burger />

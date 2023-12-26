@@ -361,7 +361,7 @@
 
 <svelte:head>
   <title>Ellimist Music | Official Website</title>
-  <description>Ellimist is an electronic music producer and DJ located in Boston, MA.</description>
+  <meta name="description" content="Ellimist is an electronic music producer and DJ located in Boston, MA." />
 </svelte:head>
 
 <style global>
