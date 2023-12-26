@@ -70,6 +70,32 @@
   let showsNav
   let showsNavW: number
 
+  const metaPages = [
+    {
+      route: '/',
+      title: 'Ellimist Music | Official Website for Electronic Producer Ellimist',
+      description: 'Ellimist is an electronic music producer and DJ located in Boston, MA.'
+    },
+    {
+      route: '/about',
+      title: 'Ellimist Music | About',
+      description: 'Ellimist is an electronic music producer, sound designer, and DJ located in Boston, MA.'
+    },
+    {
+      route: '/shows',
+      title: 'Ellimist Music | Shows - See Ellimist Live',
+      description: 'Ellimist is an electronic music producer, sound designer, and DJ who performs throughout New England and the northeast.'
+    },
+    {
+      route: '/releases',
+      title: 'Ellimist Music | Releases - Singles, Remixes, Albums, and More',
+      description: 'Singles, Remixes, Albums, and Compilations that Ellimist has created or been a part of.'
+    },
+  ]
+
+  $: activePage = metaPages.find(p => p.route === $page.route.id) || metaPages[0]
+  $: console.log($page.route.id)
+
   const releasePostions = () => {
     homeXY = [windowWidth - (homeNavW + 16), 16]
     aboutXY = [windowWidth - (aboutNavW + 16), aboutNavH + 24]
@@ -127,6 +153,10 @@
     }
   } else if ($page.route.id === "/releases") {
     // RELEASES
+    if (mounted) {
+      releasePostions()
+      scrollToReleases()
+    }
   } else if ($page.route.id === '/') {
     rotateBackdrop = "0deg"
     transformPx = "0px"
@@ -274,7 +304,7 @@
     {#if showAuxPages}
       <div class='wrapper flex flex-col items-start absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
         <div bind:clientHeight={aboutHeaderHeight} class='left-6 sm:left-18 md:left-28 pb-6'>
-          <h1 class='font-display text-primary text-4xl uppercase leading-11'>organic <br />electronic <br />music</h1>
+          <h1 class='font-display text-primary text-4xl uppercase leading-11'>Ellimist creates <br />organic <br />electronic <br />music</h1>
         </div>
         <div style="max-height: {safeAreaHeight - aboutHeaderHeight - aboutNavH - (padding8Height * 2)}px;" bind:clientHeight={aboutTextHeight} class='pb-8 px-6 sm:px-18 md:px-28 sm:flex overflow-y-scroll overflow-x-hidden sm:space-x-4'>
           <p class='text-white font-sans italic md:flex-1'>
@@ -360,8 +390,9 @@
 <Releases />
 
 <svelte:head>
-  <title>Ellimist Music | Official Website</title>
-  <meta name="description" content="Ellimist is an electronic music producer and DJ located in Boston, MA." />
+  <title>{activePage.title}</title>
+  <meta name="description" content="{activePage.description}" />
+  <link rel="canonical" href="https://ellimistmusic.com{activePage.route}" />
 </svelte:head>
 
 <style global>
