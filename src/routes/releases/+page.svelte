@@ -1,3 +1,4 @@
 <svelte:head>
-  <title>Ellimist | Music Releases - Singles, Remixes, Albums, and More</title>
+  <title>Ellimist Music - Releases</title>
+  <description>Singles, Remixes, Albums, and Compilations that Ellimist has created or been a part of.</description>
 </svelte:head>

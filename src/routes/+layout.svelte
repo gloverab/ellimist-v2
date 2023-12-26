@@ -215,7 +215,7 @@
 
 <div bind:clientHeight={padding8Height} class='absolute h-8' />
 
-<div class='w-screen fixed top-0 left-0 z-5 duration-500' class:opacity-100={showNav} class:opacity-0={!showNav}>
+<nav class='w-screen fixed top-0 left-0 z-5 duration-500' class:opacity-100={showNav} class:opacity-0={!showNav}>
   <a
     bind:this={aboutNav}
     bind:clientHeight={aboutNavH}
@@ -263,7 +263,7 @@
   >
     Shows
   </a>
-</div>
+</nav>
 
 <div class='{$page.route.id === "/" || $page.route.id === "/about" ? 'z-10' : 'z-0'} fixed top-6 right-6'>
   <SocialIcons />
@@ -274,9 +274,7 @@
     {#if showAuxPages}
       <div class='wrapper flex flex-col items-start absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
         <div bind:clientHeight={aboutHeaderHeight} class='left-6 sm:left-18 md:left-28 pb-6'>
-          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-6'>organic</h1>
-          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-6'>electronic</h1>
-          <h1 class='font-display text-primary text-4xl uppercase mb-4 leading-6'>music</h1>
+          <h1 class='font-display text-primary text-4xl uppercase leading-11'>organic <br />electronic <br />music</h1>
         </div>
         <div style="max-height: {safeAreaHeight - aboutHeaderHeight - aboutNavH - (padding8Height * 2)}px;" bind:clientHeight={aboutTextHeight} class='pb-8 px-6 sm:px-18 md:px-28 sm:flex overflow-y-scroll overflow-x-hidden sm:space-x-4'>
           <p class='text-white font-sans italic md:flex-1'>
@@ -345,9 +343,10 @@
     </div>
     {#if showAuxPages}
       <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
-        <div class='relative w-full max-w-100 p-6'>
+        <div class='relative w-full md:max-w-120 p-6 mb-24'>
           
           <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows</h1>
+          <p class='text-white text-center'>There are no shows at this time. Please check back soon.</p>
         </div>
       </div>
     {/if}
@@ -361,7 +360,8 @@
 <Releases />
 
 <svelte:head>
-  <title>Ellimist | Organic Electronic Music | Official Website</title>
+  <title>Ellimist Music | Official Website</title>
+  <description>Ellimist is an electronic music producer and DJ located in Boston, MA.</description>
 </svelte:head>
 
 <style global>
