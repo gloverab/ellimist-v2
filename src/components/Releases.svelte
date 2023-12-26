@@ -203,7 +203,7 @@
 <div id='releases-wrapper' class='min-h-screen relative z-3'>
   {#each releases as release}
     <div>
-      <img alt={`Ellimist - ${release.name}`} src="{release.image}" />
+      <img alt={`Ellimist music (${release.type}) - ${release.name}`} src="{release.image}" />
     </div>
   {/each}
 </div>

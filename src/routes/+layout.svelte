@@ -304,7 +304,7 @@
     {#if showAuxPages}
       <div class='wrapper flex flex-col items-start absolute top-0 left-0 pt-8' style="transform: translateX(-{windowWidth}px); width: {windowWidth}px">
         <div bind:clientHeight={aboutHeaderHeight} class='left-6 sm:left-18 md:left-28 pb-6'>
-          <h1 class='font-display text-primary text-4xl uppercase leading-11'>Ellimist creates <br />organic <br />electronic <br />music</h1>
+          <h2 class='font-display text-primary text-4xl uppercase leading-11'>Ellimist creates <br />organic <br />electronic <br />music</h2>
         </div>
         <div style="max-height: {safeAreaHeight - aboutHeaderHeight - aboutNavH - (padding8Height * 2)}px;" bind:clientHeight={aboutTextHeight} class='pb-8 px-6 sm:px-18 md:px-28 sm:flex overflow-y-scroll overflow-x-hidden sm:space-x-4'>
           <p class='text-white font-sans italic md:flex-1'>
@@ -334,14 +334,17 @@
     <div class='wrapper relative flex justify-center items-center absolute top-0 left-0' style="width: {windowWidth}px">
       <div bind:this={homeScreenElementWrapper} class='w-full'>
         <div bind:clientHeight={ellimistNameHeight} class='font-display text-primary text-7xl pb-2 uppercase text-center flex justify-center'>
-          <span class='transform duration-600 {rotateLetter1 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>e</span>
-          <span class='transform duration-600 {rotateLetter2 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
-          <span class='transform duration-600 {rotateLetter3 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
-          <span class='transform duration-600 {rotateLetter4 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
-          <span class='transform duration-600 {rotateLetter5 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>m</span>
-          <span class='transform duration-600 {rotateLetter6 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
-          <span class='transform duration-600 {rotateLetter7 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>s</span>
-          <span class='transform duration-600 {rotateLetter8 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>t</span>
+          <h1 class='transform duration-600 {rotateLetter1 ? "opacity-100" : "opacity-0"}'>
+            ellimist
+            <!-- <span class='transform duration-600 {rotateLetter1 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>e</span>
+            <span class='transform duration-600 {rotateLetter2 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
+            <span class='transform duration-600 {rotateLetter3 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>l</span>
+            <span class='transform duration-600 {rotateLetter4 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
+            <span class='transform duration-600 {rotateLetter5 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>m</span>
+            <span class='transform duration-600 {rotateLetter6 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>i</span>
+            <span class='transform duration-600 {rotateLetter7 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>s</span>
+            <span class='transform duration-600 {rotateLetter8 ? "rotate-y-0 opacity-100" : "-rotate-y-90 opacity-0"}'>t</span> -->
+          </h1>
         </div>
         <div class='z-0 px-7 sm:px-20 md:px-30 relative flex justify-between text-white text-lg uppercase italic w-full opacity-0'>
           <span bind:this={aboutNavShowAllDummy}>
@@ -375,7 +378,7 @@
       <div class='wrapper flex justify-center items-center absolute top-0 left-0' style="transform: translateX({windowWidth}px); width: {windowWidth}px">
         <div class='relative w-full md:max-w-120 p-6 mb-24'>
           
-          <h1 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows</h1>
+          <h2 class='font-display text-primary text-6xl uppercase text-center mb-4'>shows</h2>
           <p class='text-white text-center'>There are no shows at this time. Please check back soon.</p>
         </div>
       </div>
@@ -393,6 +396,9 @@
   <title>{activePage.title}</title>
   <meta name="description" content="{activePage.description}" />
   <link rel="canonical" href="https://ellimistmusic.com{activePage.route}" />
+  <meta property="og:title" content="{activePage.title}" />
+  <meta property="og:description" content="{activePage.description}" />
+  <meta property="og:url" content="https://ellimistmusic.com{activePage.route}" />
 </svelte:head>
 
 <style global>
