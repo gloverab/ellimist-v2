@@ -30,12 +30,14 @@
   let rotateLetter8 = false
 
   let mounted = false
+  let mountReleases = false
   let transformPx = "0px"
   let windowWidth: number
   let windowHeight: number
   let showColorLogo = false
   let showBlackLogo = false
-  let rotateBackdrop = "90deg"
+  let initialLogoAnimation = false
+  let rotateBackdrop = 0
   let mostRecentScrolls = [0]
   let disableScrollLogic = false
 
@@ -70,32 +72,6 @@
   let showsNav
   let showsNavW: number
 
-  const metaPages = [
-    {
-      route: '/',
-      title: 'Ellimist Music | Official Website for Electronic Producer Ellimist',
-      description: 'Ellimist is an electronic music producer and DJ located in Boston, MA.'
-    },
-    {
-      route: '/about',
-      title: 'Ellimist Music | About',
-      description: 'Ellimist is an electronic music producer, sound designer, and DJ located in Boston, MA.'
-    },
-    {
-      route: '/shows',
-      title: 'Ellimist Music | Shows - See Ellimist Live',
-      description: 'Ellimist is an electronic music producer, sound designer, and DJ who performs throughout New England and the northeast.'
-    },
-    {
-      route: '/releases',
-      title: 'Ellimist Music | Releases - Singles, Remixes, Albums, and More',
-      description: 'Singles, Remixes, Albums, and Compilations that Ellimist has created or been a part of.'
-    },
-  ]
-
-  $: activePage = metaPages.find(p => p.route === $page.route.id) || metaPages[0]
-  $: console.log($page.route.id)
-
   const releasePostions = () => {
     homeXY = [windowWidth - (homeNavW + 16), 16]
     aboutXY = [windowWidth - (aboutNavW + 16), aboutNavH + 24]
@@ -123,7 +99,7 @@
 
   $: if ($page.route.id === "/about") {
     // ABOUT
-    rotateBackdrop = "-90deg"
+    rotateBackdrop = -90
     transformPx = `${windowWidth}px`
     showColorLogo = true
 
@@ -139,7 +115,7 @@
     }
   } else if ($page.route.id === "/shows") {
     // SHOWS
-    rotateBackdrop = "90deg"
+    rotateBackdrop = 90
     transformPx = `-${windowWidth}px`
     showColorLogo = true
 
@@ -158,7 +134,7 @@
       scrollToReleases()
     }
   } else if ($page.route.id === '/') {
-    rotateBackdrop = "0deg"
+    rotateBackdrop = 0
     transformPx = "0px"
     showColorLogo = false
 
@@ -221,27 +197,31 @@
     mounted = true
     getUpcomingEvents()
     setTimeout(() => showBlackLogo = true, 0)
+    setTimeout(() => initialLogoAnimation = true, 1)
     setTimeout(() => showAuxPages = true, 100)
     setTimeout(() => showNav = true, 400)
 
     setTimeout(() => rotateLetter1 = true, 100)
-    setTimeout(() => rotateLetter2 = true, 200)
-    setTimeout(() => rotateLetter3 = true, 300)
-    setTimeout(() => rotateLetter4 = true, 400)
-    setTimeout(() => rotateLetter5 = true, 500)
-    setTimeout(() => rotateLetter6 = true, 600)
-    setTimeout(() => rotateLetter7 = true, 700)
-    setTimeout(() => rotateLetter8 = true, 800)
+    setTimeout(() => mountReleases = true, 2000)
+    // setTimeout(() => rotateLetter2 = true, 200)
+    // setTimeout(() => rotateLetter3 = true, 300)
+    // setTimeout(() => rotateLetter4 = true, 400)
+    // setTimeout(() => rotateLetter5 = true, 500)
+    // setTimeout(() => rotateLetter6 = true, 600)
+    // setTimeout(() => rotateLetter7 = true, 700)
+    // setTimeout(() => rotateLetter8 = true, 800)
   })
 </script>
 
 <svelte:window on:scroll={handleScroll} bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
-<div class='absolute z-1 top-0 left-0 h-full w-full flex justify-center items-center p-2'>
-  <div class='duration-600 ease-out w-full duration-2000 {showBlackLogo ? 'opacity-100' : 'opacity-0'}' style="transform: rotate({rotateBackdrop})">
-    <LogoBlack />
+{#if mounted}
+  <div class='absolute z-1 top-0 left-0 h-screen overflow-hidden w-full flex justify-center items-center p-2 transform'>
+    <div class='ease-out w-full duration-2000 {showBlackLogo ? 'opacity-100' : 'opacity-0'}' style="transform: rotate({rotateBackdrop}deg);">
+      <LogoBlack />
+    </div>
   </div>
-</div>
+{/if}
 
 <div bind:clientHeight={padding8Height} class='absolute h-8' />
 
@@ -390,15 +370,17 @@
   <div in:fade out:fade class='fixed z-4 top-0 right-0 w-full h-90 bg-gradient-to-tr from-transparent via-transparent to-black' />
 {/if}
 
-<Releases />
+{#if mountReleases || $page.route.id === "/releases"}
+  <Releases />
+{/if}
 
 <svelte:head>
-  <title>{activePage.title}</title>
-  <meta name="description" content="{activePage.description}" />
-  <link rel="canonical" href="https://ellimistmusic.com{activePage.route}" />
-  <meta property="og:title" content="{activePage.title}" />
-  <meta property="og:description" content="{activePage.description}" />
-  <meta property="og:url" content="https://ellimistmusic.com{activePage.route}" />
+  <title>{$page.data.meta.title}</title>
+  <meta name="description" content="{$page.data.meta.description}" />
+  <link rel="canonical" href="https://ellimistmusic.com{$page.data.meta.route}" />
+  <meta property="og:title" content="{$page.data.meta.title}" />
+  <meta property="og:description" content="{$page.data.meta.description}" />
+  <meta property="og:url" content="https://ellimistmusic.com{$page.data.meta.route}" />
 </svelte:head>
 
 <style global>
